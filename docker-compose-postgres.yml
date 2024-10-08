@@ -1,0 +1,30 @@
+version: '3.8'  # Specify the Docker Compose file version
+
+services:
+  postgres:
+    image: postgres:15.3  # Use the desired Postgres version
+    container_name: postgres_db
+    environment:
+    - POSTGRES_PASSWORD=listmonk4
+    - POSTGRES_USER=listmonk4
+    - POSTGRES_DB=listmonk4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk4"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # Bind the volume to persist data
+    networks:
+      - my_network  # Attach the container to the custom network
+    ports:
+      - "5432:5432"  # Map the PostgreSQL port to your host
+
+networks:
+  my_network:
+    driver: bridge  # Define a custom network
+
+volumes:
+  postgres_data:
+    driver: local  # Use the local driver for the volume (default)
